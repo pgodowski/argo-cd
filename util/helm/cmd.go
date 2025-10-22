@@ -228,9 +228,9 @@ func writeToTmp(data []byte) (string, utilio.Closer, error) {
 
 func (c *Cmd) Fetch(repo, chartName, version, destination string, creds Creds, passCredentials bool) (string, error) {
 	args := []string{"pull", "--destination", destination}
-	if version != "" {
-		args = append(args, "--version", version)
-	}
+	//if version != "" {
+	//	args = append(args, "--version", version)
+	//}
 	if creds.GetUsername() != "" {
 		args = append(args, "--username", creds.GetUsername())
 	}
@@ -246,6 +246,9 @@ func (c *Cmd) Fetch(repo, chartName, version, destination string, creds Creds, p
 		args = append(args, "--insecure-skip-tls-verify")
 	}
 
+	log.Infof("Fetch: chartName=%s, version=%s", chartName, version)
+	chartName = fmt.Sprintf("%s@%s", chartName, version)
+	log.Infof("Fetch: chartName=%s, version=%s", chartName)
 	args = append(args, "--repo", repo, chartName)
 
 	if creds.GetCAPath() != "" {
@@ -279,9 +282,9 @@ func (c *Cmd) Fetch(repo, chartName, version, destination string, creds Creds, p
 }
 
 func (c *Cmd) PullOCI(repo string, chart string, version string, destination string, creds Creds) (string, error) {
+	log.Infof("PullOCI: repo=%s, chartName=%s, version=%s", repo, chart, version)
 	args := []string{
-		"pull", fmt.Sprintf("oci://%s/%s", repo, chart), "--version",
-		version,
+		"pull", fmt.Sprintf("oci://%s/%s@%s", repo, chart, version),
 		"--destination",
 		destination,
 	}
